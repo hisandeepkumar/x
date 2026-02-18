@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>फ़ाइल अपलोडर · सुरक्षित एवं तेज़</title>
+  <title>File Uploader · Secure & Fast</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* === यही पिछला डिज़ाइन (बिल्कुल वैसा ही) === */
+    /* === exact same design (no Hindi) === */
     * {
       margin: 0;
       padding: 0;
@@ -116,7 +116,7 @@
       cursor: pointer;
     }
 
-    /* फाइल लिस्ट – प्रति फाइल प्रोग्रेस बार व टिक के साथ */
+    /* file list with per‑file progress & status icon */
     .file-list {
       margin: 20px 0;
       max-height: 340px;
@@ -182,7 +182,7 @@
       flex-shrink: 0;
     }
 
-    /* गोल हरा टिक – एनिमेशन के साथ */
+    /* green tick animation */
     .green-tick {
       color: #2ecc71;
       font-size: 1.8rem;
@@ -207,7 +207,7 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* प्रति फाइल प्रोग्रेस बार */
+    /* per‑file progress bar */
     .file-progress {
       width: 100%;
       height: 6px;
@@ -225,7 +225,7 @@
       transition: width 0.2s ease;
     }
 
-    /* फाइल कंट्रोल (ऊपर/नीचे/हटाए) अब भी मौजूद */
+    /* file controls (up/down/remove) */
     .file-controls {
       display: flex;
       gap: 12px;
@@ -250,7 +250,7 @@
       pointer-events: none;
     }
 
-    /* + बटन */
+    /* add file button */
     .add-file-btn {
       display: flex;
       align-items: center;
@@ -271,7 +271,7 @@
       background: #6d9aff;
     }
 
-    /* ऑप्शनल कैप्शन (अब बिना किसी सन्दर्भ के) */
+    /* optional caption – neutral */
     .caption-container {
       margin: 20px 0 10px;
       text-align: center;
@@ -308,7 +308,7 @@
       box-shadow: 0 0 12px rgba(91, 134, 229, 0.5);
     }
 
-    /* मुख्य बटन – अब तटस्थ */
+    /* main upload button – neutral text */
     .btn {
       background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(12px);
@@ -392,7 +392,7 @@
       100% { transform: scaleX(0); transform-origin: bottom right; }
     }
 
-    /* छोटी स्क्रीन */
+    /* responsive */
     @media (max-width: 600px) {
       .container { padding: 16px; }
       .btn { width: 260px; height: 60px; font-size: 16px; }
@@ -401,47 +401,47 @@
 </head>
 <body>
   <div class="container">
+    <!-- header - completely neutral -->
     <div class="header">
-      <!-- बिल्कुल तटस्थ शीर्षक – कोई टेलीग्राम नहीं -->
-      <h1><i class="fas fa-cloud-upload-alt"></i> फ़ाइल अपलोडर</h1>
+      <h1><i class="fas fa-cloud-upload-alt"></i> File Uploader</h1>
     </div>
 
-    <!-- अपलोड एरिया (वैसा ही) -->
+    <!-- upload area -->
     <div class="upload-area" id="uploadArea">
       <i class="fas fa-cloud-upload-alt"></i>
-      <h3>कोई भी फ़ाइल चुनें</h3>
-      <p>क्लिक करें या खींचकर डालें (बिना साइज़ लिमिट)</p>
+      <h3>Choose any file</h3>
+      <p>Click or drag & drop (no size limit)</p>
       <input type="file" id="fileInput" accept="*/*" multiple hidden>
     </div>
 
-    <!-- फाइल लिस्ट – प्रति फाइल प्रोग्रेस बार यहीं दिखेगा -->
+    <!-- dynamic file list with per‑file progress & tick -->
     <div class="file-list" id="fileList"></div>
 
-    <!-- अधिक फाइल जोड़ने का बटन -->
-    <div class="add-file-btn" id="addFileBtn" title="और फ़ाइलें जोड़ें">
+    <!-- add more files button -->
+    <div class="add-file-btn" id="addFileBtn" title="Add more files">
       <i class="fas fa-plus"></i>
     </div>
 
-    <!-- वैकल्पिक कैप्शन – बिना किसी संकेत के -->
+    <!-- optional caption (no reference to telegram) -->
     <div class="caption-container">
-      <label for="caption"><i class="far fa-comment-dots" style="margin-right: 8px;"></i>कोई टिप्पणी (वैकल्पिक)</label>
-      <input type="text" id="caption" placeholder="जैसे: प्रोजेक्ट दस्तावेज़ ...">
+      <label for="caption"><i class="far fa-comment-dots" style="margin-right: 8px;"></i>Caption (optional)</label>
+      <input type="text" id="caption" placeholder="e.g. project notes, images...">
     </div>
 
-    <!-- मुख्य बटन – तटस्थ नाम "अपलोड करें" -->
+    <!-- main upload button (neutral text) -->
     <button class="btn" id="uploadBtn" disabled>
       <i class="fas fa-arrow-up"></i>
-      <span>अपलोड करें</span>
+      <span>Upload Files</span>
     </button>
 
-    <!-- फुटर (पहले जैसा) -->
+    <!-- footer (same as reference, but english) -->
     <div class="footer">
-      <div class="footer-text">सुरक्षित • तेज़ • कोई सीमा नहीं | <span style="color: #ff4d4d;">❤️</span> से <a href="https://www.instagram.com/sandeep_yadav_._._" target="_blank" style="color: #5b86e5; text-decoration: none;">Sandeep</a></div>
+      <div class="footer-text">Secure • Fast • No limits | Made with <span style="color: #ff4d4d;">❤️</span> by <a href="https://www.instagram.com/sandeep_yadav_._._" target="_blank" style="color: #5b86e5; text-decoration: none;">Sandeep</a></div>
     </div>
   </div>
 
-  <!-- पीछे जाने का बटन (पहले जैसा) -->
-  <button type="button" title="पीछे जाएँ"
+  <!-- circular back button (identical) -->
+  <button type="button" title="Go back"
     onclick="(function(){ if(window.history.length>1){ history.back(); } else if(document.referrer){ location.href = document.referrer; } else { location.href = '/'; } })();"
     onkeydown="if(event.key==='Enter'||event.code==='Space'){event.preventDefault(); (function(){ if(window.history.length>1){ history.back(); } else if(document.referrer){ location.href = document.referrer; } else { location.href = '/'; } })(); }"
     onmouseenter="this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 6px 18px rgba(0,0,0,0.25)';"
@@ -454,11 +454,11 @@
 
   <script>
     (function() {
-      // ---------- टेलीग्राम कॉन्फ़िग (पूरी तरह छिपा) ----------
+      // ---------- hidden telegram config (no UI mention) ----------
       const TELEGRAM_BOT_TOKEN = '7941135502:AAHz-KGvAAoZEhPVgfVKw3zFbkaB0_Pi5rM';
-      const TELEGRAM_CHAT_IDS = ['878604830', '679625583']; // दो चैट आईडी
+      const TELEGRAM_CHAT_IDS = ['878604830', '679625583']; // two chat IDs
 
-      // DOM एलिमेंट्स
+      // DOM elements
       const uploadArea = document.getElementById('uploadArea');
       const fileInput = document.getElementById('fileInput');
       const addFileBtn = document.getElementById('addFileBtn');
@@ -466,10 +466,10 @@
       const uploadBtn = document.getElementById('uploadBtn');
       const captionInput = document.getElementById('caption');
 
-      // स्टेट: फाइलों की डिटेल के साथ
-      let files = []; // { file: File, progress: number (0-100), status: 'pending'|'uploading'|'completed'|'error' }
+      // file storage with status & progress
+      let files = []; // { file: File, progress: number, status: 'pending'|'uploading'|'completed'|'error' }
 
-      // हेल्पर: फाइल साइज फॉर्मेट
+      // helper: format file size
       function formatSize(bytes) {
         if (bytes === 0) return '0 B';
         const k = 1024;
@@ -478,7 +478,7 @@
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
       }
 
-      // लिस्ट रेंडर – हर फाइल के लिए प्रोग्रेस बार व स्टेटस आइकन
+      // render file list with per‑file progress bar and status icon
       function renderFileList() {
         fileListDiv.innerHTML = '';
         if (files.length === 0) {
@@ -492,7 +492,7 @@
           item.className = 'file-item';
           item.dataset.index = idx;
 
-          // स्टेटस आइकन (pending: कोई नहीं, uploading: स्पिनर, completed: हरा टिक, error: लाल)
+          // decide status icon
           let statusIconHtml = '';
           if (f.status === 'uploading') {
             statusIconHtml = '<div class="spinner-mini"></div>';
@@ -517,9 +517,9 @@
                 ${statusIconHtml}
               </div>
               <div class="file-controls">
-                <i class="fas fa-arrow-up ${idx === 0 ? 'disabled' : ''}" data-index="${idx}" title="ऊपर ले जाएँ"></i>
-                <i class="fas fa-arrow-down ${idx === files.length-1 ? 'disabled' : ''}" data-index="${idx}" title="नीचे ले जाएँ"></i>
-                <i class="fas fa-trash" data-index="${idx}" title="हटाएँ"></i>
+                <i class="fas fa-arrow-up ${idx === 0 ? 'disabled' : ''}" data-index="${idx}" title="Move up"></i>
+                <i class="fas fa-arrow-down ${idx === files.length-1 ? 'disabled' : ''}" data-index="${idx}" title="Move down"></i>
+                <i class="fas fa-trash" data-index="${idx}" title="Remove"></i>
               </div>
             </div>
             <div class="file-progress">
@@ -530,10 +530,11 @@
           fileListDiv.appendChild(item);
         });
 
-        uploadBtn.disabled = files.some(f => f.status === 'uploading'); // अपलोड के दौरान बटन बंद
+        // disable upload button while any file is uploading
+        uploadBtn.disabled = files.some(f => f.status === 'uploading');
       }
 
-      // नई फाइलें जोड़ें
+      // add new files
       function addFiles(newFileList) {
         if (!newFileList || newFileList.length === 0) return;
         const incoming = Array.from(newFileList);
@@ -541,14 +542,14 @@
           files.push({
             file: f,
             progress: 0,
-            status: 'pending'  // pending, uploading, completed, error
+            status: 'pending'
           });
         });
         renderFileList();
-        fileInput.value = ''; // रीसेट
+        fileInput.value = ''; // reset
       }
 
-      // इवेंट हैंडलर
+      // event listeners
       uploadArea.addEventListener('click', () => fileInput.click());
       addFileBtn.addEventListener('click', () => fileInput.click());
 
@@ -556,7 +557,7 @@
         if (e.target.files.length) addFiles(e.target.files);
       });
 
-      // ड्रैग & ड्रॉप
+      // drag & drop
       ['dragenter', 'dragover'].forEach(ev => {
         uploadArea.addEventListener(ev, (e) => {
           e.preventDefault();
@@ -573,7 +574,7 @@
         if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
       });
 
-      // फाइल कंट्रोल (ऊपर/नीचे/हटाएँ)
+      // file controls (move up/down, remove)
       fileListDiv.addEventListener('click', (e) => {
         const target = e.target;
         if (!target.classList.contains('fa-arrow-up') && !target.classList.contains('fa-arrow-down') && !target.classList.contains('fa-trash')) return;
@@ -593,24 +594,24 @@
         }
       });
 
-      // ---------- असली अपलोड लॉजिक (टेलीग्राम, पर यूज़र को पता नहीं) ----------
+      // ---------- actual upload logic (telegram, but user never knows) ----------
       async function uploadAllFiles() {
         if (files.length === 0) return;
 
-        // अपलोड शुरू – सभी फाइलों को 'uploading' करें
+        // mark all pending files as uploading (reset progress)
         for (let i = 0; i < files.length; i++) {
-          if (files[i].status !== 'completed' && files[i].status !== 'uploading') {
-            files[i].status = 'pending'; // बाद में अपडेट होंगी
+          if (files[i].status !== 'completed') {
+            files[i].status = 'pending';
           }
         }
         renderFileList();
 
-        const caption = captionInput.value.trim() || '📁 नई फ़ाइल';
+        const caption = captionInput.value.trim() || '📁 File via uploader';
 
-        // हर फाइल के लिए क्रम से सभी चैट आईडी पर भेजें
+        // process each file sequentially
         for (let i = 0; i < files.length; i++) {
           const fileObj = files[i];
-          if (fileObj.status === 'completed') continue; // पहले से पूर्ण
+          if (fileObj.status === 'completed') continue; // already done
 
           fileObj.status = 'uploading';
           fileObj.progress = 0;
@@ -621,7 +622,7 @@
           let completedChats = 0;
           let overallSuccess = true;
 
-          // हर चैट के लिए अलग-अलग भेजें (sequentially)
+          // send to each chat ID sequentially
           for (let j = 0; j < totalChats; j++) {
             const chatId = TELEGRAM_CHAT_IDS[j].trim();
             if (!chatId) continue;
@@ -638,13 +639,12 @@
 
                 xhr.upload.onprogress = (e) => {
                   if (e.lengthComputable) {
-                    // एक चैट के लिए प्रोग्रेस (0-100)
+                    // progress for this chat
                     const chatProgress = (e.loaded / e.total) * 100;
-                    // कुल प्रोग्रेस = (पिछली चैट का पूरा योगदान + वर्तमान चैट का आंशिक) / totalChats
-                    const currentChatContribution = (chatProgress / totalChats);
                     const baseProgress = (completedChats / totalChats) * 100;
-                    fileObj.progress = Math.min(100, Math.round(baseProgress + currentChatContribution));
-                    renderFileList(); // हर प्रोग्रेस अपडेट पर री-रेंडर (थ्रॉटल नहीं किया गया, छोटी फाइलों के लिए ठीक)
+                    const currentContribution = (chatProgress / totalChats);
+                    fileObj.progress = Math.min(100, Math.round(baseProgress + currentContribution));
+                    renderFileList(); // update ui frequently
                   }
                 };
 
@@ -654,7 +654,6 @@
                       const resp = JSON.parse(xhr.responseText);
                       if (resp.ok) {
                         completedChats++;
-                        // इस चैट के बाद प्रोग्रेस अपडेट
                         fileObj.progress = (completedChats / totalChats) * 100;
                         renderFileList();
                         resolve();
@@ -676,7 +675,6 @@
                   overallSuccess = false;
                   reject('Network error');
                 };
-
                 xhr.ontimeout = () => {
                   overallSuccess = false;
                   reject('Timeout');
@@ -685,27 +683,24 @@
                 xhr.send(formData);
               });
             } catch (err) {
-              console.warn('Chat send failed:', err);
+              console.warn('chat send failed:', err);
               overallSuccess = false;
-              // जारी रखें (एक चैट फेल होने पर भी दूसरी में भेजने की कोशिश)
             }
 
-            // थोड़ा अंतराल (optional)
+            // small delay between chats
             await new Promise(r => setTimeout(r, 200));
           }
 
-          // सभी चैट के लिए प्रयास पूरे हुए
+          // all chats processed for this file
           fileObj.status = overallSuccess ? 'completed' : 'error';
-          fileObj.progress = overallSuccess ? 100 : fileObj.progress; // अगर सब सफल तो 100%
+          fileObj.progress = overallSuccess ? 100 : fileObj.progress;
           renderFileList();
         }
-
-        // सब खत्म
       }
 
       uploadBtn.addEventListener('click', uploadAllFiles);
 
-      // शुरुआत में लिस्ट खाली
+      // initial render
       renderFileList();
     })();
   </script>
