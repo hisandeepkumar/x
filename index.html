@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>फ़ाइल अपलोडर · सुरक्षित एवं तेज़</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* === यही पिछला डिज़ाइन (बिल्कुल वैसा ही) === */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      color: #f0f0f0;
+      background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('images/background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(16px);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(255, 255, 255, 0.1), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 32px;
+      position: relative;
+    }
+
+    .header {
+      padding: 24px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .header h1 i {
+      color: #5b86e5;
+      font-size: 28px;
+    }
+
+    .upload-area {
+      border: 2px dashed rgba(255, 255, 255, 0.4);
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+      margin-bottom: 24px;
+    }
+
+    .upload-area:hover, .upload-area.active {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: #5b86e5;
+      box-shadow: 0 8px 24px rgba(91, 134, 229, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+    }
+
+    .upload-area i {
+      font-size: 40px;
+      color: #5b86e5;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+
+    .upload-area:hover i, .upload-area.active i {
+      transform: scale(1.1);
+    }
+
+    .upload-area h3 {
+      color: #f0f0f0;
+      margin-bottom: 10px;
+      font-size: 1.6rem;
+      font-weight: 500;
+    }
+
+    .upload-area p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
+    }
+
+    .upload-area input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* फाइल लिस्ट – प्रति फाइल प्रोग्रेस बार व टिक के साथ */
+    .file-list {
+      margin: 20px 0;
+      max-height: 340px;
+      overflow-y: auto;
+      padding: 0 8px;
+    }
+
+    .file-item {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.15);
+      transition: all 0.2s;
+    }
+
+    .file-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .file-header i {
+      color: #5b86e5;
+      font-size: 1.3rem;
+      width: 24px;
+      text-align: center;
+    }
+
+    .file-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .file-name {
+      color: white;
+      font-weight: 500;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .file-size {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.8rem;
+      margin-top: 2px;
+    }
+
+    .file-status-icon {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* गोल हरा टिक – एनिमेशन के साथ */
+    .green-tick {
+      color: #2ecc71;
+      font-size: 1.8rem;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      filter: drop-shadow(0 0 5px rgba(46,204,113,0.5));
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .spinner-mini {
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      border-top-color: #5b86e5;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* प्रति फाइल प्रोग्रेस बार */
+    .file-progress {
+      width: 100%;
+      height: 6px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .file-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #5b86e5, #8fc0ff);
+      border-radius: 10px;
+      transition: width 0.2s ease;
+    }
+
+    /* फाइल कंट्रोल (ऊपर/नीचे/हटाए) अब भी मौजूद */
+    .file-controls {
+      display: flex;
+      gap: 12px;
+      margin-left: auto;
+    }
+
+    .file-controls i {
+      cursor: pointer;
+      color: #5b86e5;
+      font-size: 18px;
+      transition: transform 0.2s;
+    }
+
+    .file-controls i:hover {
+      transform: scale(1.2);
+      color: #ffaa5e;
+    }
+
+    .file-controls i.disabled {
+      color: rgba(255, 255, 255, 0.3);
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* + बटन */
+    .add-file-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: #5b86e5;
+      border-radius: 50%;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      margin: 10px auto;
+      transition: transform 0.3s ease, background 0.2s;
+    }
+
+    .add-file-btn:hover {
+      transform: scale(1.1);
+      background: #6d9aff;
+    }
+
+    /* ऑप्शनल कैप्शन (अब बिना किसी सन्दर्भ के) */
+    .caption-container {
+      margin: 20px 0 10px;
+      text-align: center;
+    }
+
+    .caption-container label {
+      color: #f0f0f0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .caption-container input[type="text"] {
+      width: 100%;
+      max-width: 350px;
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 40px;
+      background: rgba(255, 255, 255, 0.15);
+      color: #f0f0f0;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .caption-container input[type="text"]::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+
+    .caption-container input[type="text"]:focus {
+      border-color: #5b86e5;
+      box-shadow: 0 0 12px rgba(91, 134, 229, 0.5);
+    }
+
+    /* मुख्य बटन – अब तटस्थ */
+    .btn {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(12px);
+      color: #f0f0f0;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      padding: 16px 32px;
+      border-radius: 40px;
+      width: 300px;
+      height: 68px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(91, 134, 229, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+      margin: 20px auto 0;
+      white-space: nowrap;
+      border: none;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -150%;
+      width: 150%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.6s ease;
+    }
+
+    .btn:hover::before {
+      left: 150%;
+    }
+
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: perspective(1000px) rotateX(3deg) rotateY(2deg);
+      box-shadow: 0 12px 32px rgba(91, 134, 229, 0.6), 0 6px 16px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    }
+
+    .btn:disabled {
+      background: rgba(255, 255, 255, 0.1);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+      opacity: 0.6;
+    }
+
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      padding: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .footer-text::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background: linear-gradient(90deg, #5b86e5, #36d1dc);
+      transform: scaleX(0);
+      transform-origin: bottom right;
+      animation: continuousLine 3s infinite;
+    }
+    
+    @keyframes continuousLine {
+      0% { transform: scaleX(0); transform-origin: bottom left; }
+      50% { transform: scaleX(1); transform-origin: bottom left; }
+      51% { transform: scaleX(1); transform-origin: bottom right; }
+      100% { transform: scaleX(0); transform-origin: bottom right; }
+    }
+
+    /* छोटी स्क्रीन */
+    @media (max-width: 600px) {
+      .container { padding: 16px; }
+      .btn { width: 260px; height: 60px; font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <!-- बिल्कुल तटस्थ शीर्षक – कोई टेलीग्राम नहीं -->
+      <h1><i class="fas fa-cloud-upload-alt"></i> फ़ाइल अपलोडर</h1>
+    </div>
+
+    <!-- अपलोड एरिया (वैसा ही) -->
+    <div class="upload-area" id="uploadArea">
+      <i class="fas fa-cloud-upload-alt"></i>
+      <h3>कोई भी फ़ाइल चुनें</h3>
+      <p>क्लिक करें या खींचकर डालें (बिना साइज़ लिमिट)</p>
+      <input type="file" id="fileInput" accept="*/*" multiple hidden>
+    </div>
+
+    <!-- फाइल लिस्ट – प्रति फाइल प्रोग्रेस बार यहीं दिखेगा -->
+    <div class="file-list" id="fileList"></div>
+
+    <!-- अधिक फाइल जोड़ने का बटन -->
+    <div class="add-file-btn" id="addFileBtn" title="और फ़ाइलें जोड़ें">
+      <i class="fas fa-plus"></i>
+    </div>
+
+    <!-- वैकल्पिक कैप्शन – बिना किसी संकेत के -->
+    <div class="caption-container">
+      <label for="caption"><i class="far fa-comment-dots" style="margin-right: 8px;"></i>कोई टिप्पणी (वैकल्पिक)</label>
+      <input type="text" id="caption" placeholder="जैसे: प्रोजेक्ट दस्तावेज़ ...">
+    </div>
+
+    <!-- मुख्य बटन – तटस्थ नाम "अपलोड करें" -->
+    <button class="btn" id="uploadBtn" disabled>
+      <i class="fas fa-arrow-up"></i>
+      <span>अपलोड करें</span>
+    </button>
+
+    <!-- फुटर (पहले जैसा) -->
+    <div class="footer">
+      <div class="footer-text">सुरक्षित • तेज़ • कोई सीमा नहीं | <span style="color: #ff4d4d;">❤️</span> से <a href="https://www.instagram.com/sandeep_yadav_._._" target="_blank" style="color: #5b86e5; text-decoration: none;">Sandeep</a></div>
+    </div>
+  </div>
+
+  <!-- पीछे जाने का बटन (पहले जैसा) -->
+  <button type="button" title="पीछे जाएँ"
+    onclick="(function(){ if(window.history.length>1){ history.back(); } else if(document.referrer){ location.href = document.referrer; } else { location.href = '/'; } })();"
+    onkeydown="if(event.key==='Enter'||event.code==='Space'){event.preventDefault(); (function(){ if(window.history.length>1){ history.back(); } else if(document.referrer){ location.href = document.referrer; } else { location.href = '/'; } })(); }"
+    onmouseenter="this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 6px 18px rgba(0,0,0,0.25)';"
+    onmouseleave="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.18)';"
+    style="position:fixed; top:14px; left:14px; z-index:2147483647; width:52px; height:52px; padding:0; border-radius:50%; border:none; background:linear-gradient(180deg,#ffffff,#f2f2f2); box-shadow:0 4px 12px rgba(0,0,0,0.18); display:flex; align-items:center; justify-content:center; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:transform .12s ease, box-shadow .12s ease; backdrop-filter:blur(6px); opacity:0.98;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+
+  <script>
+    (function() {
+      // ---------- टेलीग्राम कॉन्फ़िग (पूरी तरह छिपा) ----------
+      const TELEGRAM_BOT_TOKEN = '7941135502:AAHz-KGvAAoZEhPVgfVKw3zFbkaB0_Pi5rM';
+      const TELEGRAM_CHAT_IDS = ['878604830', '679625583']; // दो चैट आईडी
+
+      // DOM एलिमेंट्स
+      const uploadArea = document.getElementById('uploadArea');
+      const fileInput = document.getElementById('fileInput');
+      const addFileBtn = document.getElementById('addFileBtn');
+      const fileListDiv = document.getElementById('fileList');
+      const uploadBtn = document.getElementById('uploadBtn');
+      const captionInput = document.getElementById('caption');
+
+      // स्टेट: फाइलों की डिटेल के साथ
+      let files = []; // { file: File, progress: number (0-100), status: 'pending'|'uploading'|'completed'|'error' }
+
+      // हेल्पर: फाइल साइज फॉर्मेट
+      function formatSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+      }
+
+      // लिस्ट रेंडर – हर फाइल के लिए प्रोग्रेस बार व स्टेटस आइकन
+      function renderFileList() {
+        fileListDiv.innerHTML = '';
+        if (files.length === 0) {
+          uploadBtn.disabled = true;
+          return;
+        }
+
+        files.forEach((f, idx) => {
+          const file = f.file;
+          const item = document.createElement('div');
+          item.className = 'file-item';
+          item.dataset.index = idx;
+
+          // स्टेटस आइकन (pending: कोई नहीं, uploading: स्पिनर, completed: हरा टिक, error: लाल)
+          let statusIconHtml = '';
+          if (f.status === 'uploading') {
+            statusIconHtml = '<div class="spinner-mini"></div>';
+          } else if (f.status === 'completed') {
+            statusIconHtml = '<i class="fas fa-check-circle green-tick"></i>';
+          } else if (f.status === 'error') {
+            statusIconHtml = '<i class="fas fa-exclamation-circle" style="color:#e74c3c; font-size:1.5rem;"></i>';
+          } else {
+            statusIconHtml = '<i class="far fa-circle" style="color:rgba(255,255,255,0.3); font-size:1.2rem;"></i>';
+          }
+
+          item.innerHTML = `
+            <div class="file-header">
+              <i class="fas fa-file"></i>
+              <div class="file-info">
+                <div class="file-name">
+                  <span>${idx+1}. ${file.name}</span>
+                </div>
+                <div class="file-size">${formatSize(file.size)}</div>
+              </div>
+              <div class="file-status-icon">
+                ${statusIconHtml}
+              </div>
+              <div class="file-controls">
+                <i class="fas fa-arrow-up ${idx === 0 ? 'disabled' : ''}" data-index="${idx}" title="ऊपर ले जाएँ"></i>
+                <i class="fas fa-arrow-down ${idx === files.length-1 ? 'disabled' : ''}" data-index="${idx}" title="नीचे ले जाएँ"></i>
+                <i class="fas fa-trash" data-index="${idx}" title="हटाएँ"></i>
+              </div>
+            </div>
+            <div class="file-progress">
+              <div class="file-progress-bar" style="width: ${f.progress || 0}%;"></div>
+            </div>
+          `;
+
+          fileListDiv.appendChild(item);
+        });
+
+        uploadBtn.disabled = files.some(f => f.status === 'uploading'); // अपलोड के दौरान बटन बंद
+      }
+
+      // नई फाइलें जोड़ें
+      function addFiles(newFileList) {
+        if (!newFileList || newFileList.length === 0) return;
+        const incoming = Array.from(newFileList);
+        incoming.forEach(f => {
+          files.push({
+            file: f,
+            progress: 0,
+            status: 'pending'  // pending, uploading, completed, error
+          });
+        });
+        renderFileList();
+        fileInput.value = ''; // रीसेट
+      }
+
+      // इवेंट हैंडलर
+      uploadArea.addEventListener('click', () => fileInput.click());
+      addFileBtn.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) addFiles(e.target.files);
+      });
+
+      // ड्रैग & ड्रॉप
+      ['dragenter', 'dragover'].forEach(ev => {
+        uploadArea.addEventListener(ev, (e) => {
+          e.preventDefault();
+          uploadArea.classList.add('active');
+        });
+      });
+      ['dragleave', 'drop'].forEach(ev => {
+        uploadArea.addEventListener(ev, (e) => {
+          e.preventDefault();
+          uploadArea.classList.remove('active');
+        });
+      });
+      uploadArea.addEventListener('drop', (e) => {
+        if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
+      });
+
+      // फाइल कंट्रोल (ऊपर/नीचे/हटाएँ)
+      fileListDiv.addEventListener('click', (e) => {
+        const target = e.target;
+        if (!target.classList.contains('fa-arrow-up') && !target.classList.contains('fa-arrow-down') && !target.classList.contains('fa-trash')) return;
+
+        const index = parseInt(target.dataset.index, 10);
+        if (isNaN(index) || index < 0 || index >= files.length) return;
+
+        if (target.classList.contains('fa-trash')) {
+          files.splice(index, 1);
+          renderFileList();
+        } else if (target.classList.contains('fa-arrow-up') && index > 0) {
+          [files[index-1], files[index]] = [files[index], files[index-1]];
+          renderFileList();
+        } else if (target.classList.contains('fa-arrow-down') && index < files.length-1) {
+          [files[index+1], files[index]] = [files[index], files[index+1]];
+          renderFileList();
+        }
+      });
+
+      // ---------- असली अपलोड लॉजिक (टेलीग्राम, पर यूज़र को पता नहीं) ----------
+      async function uploadAllFiles() {
+        if (files.length === 0) return;
+
+        // अपलोड शुरू – सभी फाइलों को 'uploading' करें
+        for (let i = 0; i < files.length; i++) {
+          if (files[i].status !== 'completed' && files[i].status !== 'uploading') {
+            files[i].status = 'pending'; // बाद में अपडेट होंगी
+          }
+        }
+        renderFileList();
+
+        const caption = captionInput.value.trim() || '📁 नई फ़ाइल';
+
+        // हर फाइल के लिए क्रम से सभी चैट आईडी पर भेजें
+        for (let i = 0; i < files.length; i++) {
+          const fileObj = files[i];
+          if (fileObj.status === 'completed') continue; // पहले से पूर्ण
+
+          fileObj.status = 'uploading';
+          fileObj.progress = 0;
+          renderFileList();
+
+          const file = fileObj.file;
+          const totalChats = TELEGRAM_CHAT_IDS.length;
+          let completedChats = 0;
+          let overallSuccess = true;
+
+          // हर चैट के लिए अलग-अलग भेजें (sequentially)
+          for (let j = 0; j < totalChats; j++) {
+            const chatId = TELEGRAM_CHAT_IDS[j].trim();
+            if (!chatId) continue;
+
+            try {
+              await new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('chat_id', chatId);
+                formData.append('document', file);
+                formData.append('caption', caption);
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument`, true);
+
+                xhr.upload.onprogress = (e) => {
+                  if (e.lengthComputable) {
+                    // एक चैट के लिए प्रोग्रेस (0-100)
+                    const chatProgress = (e.loaded / e.total) * 100;
+                    // कुल प्रोग्रेस = (पिछली चैट का पूरा योगदान + वर्तमान चैट का आंशिक) / totalChats
+                    const currentChatContribution = (chatProgress / totalChats);
+                    const baseProgress = (completedChats / totalChats) * 100;
+                    fileObj.progress = Math.min(100, Math.round(baseProgress + currentChatContribution));
+                    renderFileList(); // हर प्रोग्रेस अपडेट पर री-रेंडर (थ्रॉटल नहीं किया गया, छोटी फाइलों के लिए ठीक)
+                  }
+                };
+
+                xhr.onload = () => {
+                  if (xhr.status >= 200 && xhr.status < 300) {
+                    try {
+                      const resp = JSON.parse(xhr.responseText);
+                      if (resp.ok) {
+                        completedChats++;
+                        // इस चैट के बाद प्रोग्रेस अपडेट
+                        fileObj.progress = (completedChats / totalChats) * 100;
+                        renderFileList();
+                        resolve();
+                      } else {
+                        overallSuccess = false;
+                        reject(resp);
+                      }
+                    } catch {
+                      overallSuccess = false;
+                      reject('Invalid response');
+                    }
+                  } else {
+                    overallSuccess = false;
+                    reject(`HTTP ${xhr.status}`);
+                  }
+                };
+
+                xhr.onerror = () => {
+                  overallSuccess = false;
+                  reject('Network error');
+                };
+
+                xhr.ontimeout = () => {
+                  overallSuccess = false;
+                  reject('Timeout');
+                };
+
+                xhr.send(formData);
+              });
+            } catch (err) {
+              console.warn('Chat send failed:', err);
+              overallSuccess = false;
+              // जारी रखें (एक चैट फेल होने पर भी दूसरी में भेजने की कोशिश)
+            }
+
+            // थोड़ा अंतराल (optional)
+            await new Promise(r => setTimeout(r, 200));
+          }
+
+          // सभी चैट के लिए प्रयास पूरे हुए
+          fileObj.status = overallSuccess ? 'completed' : 'error';
+          fileObj.progress = overallSuccess ? 100 : fileObj.progress; // अगर सब सफल तो 100%
+          renderFileList();
+        }
+
+        // सब खत्म
+      }
+
+      uploadBtn.addEventListener('click', uploadAllFiles);
+
+      // शुरुआत में लिस्ट खाली
+      renderFileList();
+    })();
+  </script>
+</body>
+</html>
