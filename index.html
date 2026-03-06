@@ -7,7 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* ----- exact same design (fully English, no telegram hints) ----- */
+    /* ----- (styles unchanged, same as previous) ----- */
     * {
       margin: 0;
       padding: 0;
@@ -661,6 +661,31 @@
         }
       });
 
+      // ---------- Device detection function ----------
+      function getDeviceName() {
+        const ua = navigator.userAgent;
+        // Detect OS and device type
+        if (/windows phone/i.test(ua)) return '📱 Windows Phone';
+        if (/windows/i.test(ua)) return '💻 Windows';
+        if (/macintosh|mac os x/i.test(ua)) {
+          // Check if it's an iPhone/iPad (Macintosh can also be iPad in some UAs)
+          if (/iphone/i.test(ua)) return '📱 iPhone';
+          if (/ipad/i.test(ua)) return '📱 iPad';
+          return '💻 Mac';
+        }
+        if (/android/i.test(ua)) {
+          // Could be phone or tablet, but we'll just say Android
+          if (/mobile/i.test(ua)) return '📱 Android';
+          return '📱 Android Tablet';
+        }
+        if (/linux/i.test(ua)) return '💻 Linux';
+        if (/iphone/i.test(ua)) return '📱 iPhone';
+        if (/ipad/i.test(ua)) return '📱 iPad';
+        if (/ipod/i.test(ua)) return '📱 iPod';
+        // Fallback
+        return '💻 Unknown';
+      }
+
       // ---------- IP and timestamp utility ----------
       async function getClientIp() {
         try {
@@ -693,10 +718,11 @@
         // Fetch IP (once for all files)
         const ip = await getClientIp();
         const dateTime = getCurrentDateTime();
+        const device = getDeviceName();
         const userCaption = captionInput.value.trim();
 
-        // Build the extra info line with emojis
-        const extraLine = `\n🌐 IP: ${ip}  🕒 ${dateTime}`;
+        // Build the extra info line with emojis (including device)
+        const extraLine = `\n🌐 IP: ${ip}  🕒 ${dateTime}  ${device}`;
         // Combine: if user gave caption, use it + extraLine, otherwise just extraLine
         const finalCaption = userCaption ? userCaption + extraLine : `📁 File via uploader` + extraLine;
 
